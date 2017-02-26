@@ -1,0 +1,180 @@
++++
+#SEO Data
+Keywords = ["multi factorial", "experiment simulation"]
+description = "This tool simulates the multifactorial experiments."
+
+date = "2017-02-25T00:00:00-06:00"
+title = "Multifactorial experiment simulator"
+
++++
+<p>This tool allows user to simulate multifactorial experiments. The optimization result can be verified here: This tool provides an error of the estimated values for the factors.</p>
+<div class="w3-row">
+	<div class="w3-col m12 l12 s12 w3-padding w3-border w3-border-theme w3-center">Number of factors</div>
+	<div class="w3-col m12 l12 s12">
+		<input id="NumOfFactors" class="w3-input w3-border w3-border-theme" placeholder="Enter an integer" type="text">
+	</div>
+	<div class="w3-col m12 l12 s12">
+		<button id="Next000" class="w3-btn w3-theme w3-ripple w3-block">Next</button>
+	</div>
+</div>
+<div id="FactorDeclaration" class="w3-containter w3-margin-top w3-border w3-border-theme">
+	<div class="w3-row">
+		<div class="w3-col m4 l4 s4 w3-padding w3-border w3-border-theme w3-center">Factor</div>
+		<div class="w3-col m4 l4 s4 w3-padding w3-border w3-border-theme w3-center">Lower limit</div>
+		<div class="w3-col m4 l4 s4 w3-padding w3-border w3-border-theme w3-center">Upper limit</div>
+	</div>
+	<div id="FactorLimits" class="w3-row">
+	</div>
+</div>
+<div id="PerformExperiment" class="w3-containter w3-margin-top w3-border w3-border-theme">
+	<div class="w3-row">
+		<div class="w3-col m6 l6 s6 w3-padding w3-border w3-border-theme w3-center">Factor</div>
+		<div class="w3-col m6 l6 s6 w3-padding w3-border w3-border-theme w3-center">Value</div>
+	</div>
+	<div id="FactorValues" class="w3-row">
+	</div>
+</div>
+
+<script>
+var Period = [];
+var maxPoint = [];
+var NumOfFactors;
+var MaximumValueLimit;
+var x = [];
+$( document ).ready(function() {
+	$("#Next000").click(function(){Next000()});
+	$("#FactorDeclaration").css("display","none");
+	$("#PerformExperiment").css("display","none");
+	$("#NumOfFactors").focus();
+});
+function Next000() {
+	NumOfFactors = parseInt($('#NumOfFactors').val());
+	$('#NumOfFactors').val(NumOfFactors);
+	if (NumOfFactors>0) {
+		$("#NumOfFactors").prop('disabled', true);
+		$("#Next000").text("Reset");
+		$("#Next000").attr('onclick','').unbind('click');
+		$("#Next000").click(function(){ResetAll()});
+		for(var i=0; i<NumOfFactors; i++) {
+			$("#FactorLimits").append("<div class='w3-col m4 l4 s4'><input id='FactorLabel"+i+"' class='w3-input w3-border w3-border-theme' type='text' value='Factor "+i+"'></div>");
+			$("#FactorLimits").append("<div class='w3-col m4 l4 s4'><input id='FactorLLimit"+i+"' class='w3-input w3-border w3-border-theme w3-right-align' type='text' value='0'></div>");
+			$("#FactorLimits").append("<div class='w3-col m4 l4 s4'><input id='FactorULimit"+i+"' class='w3-input w3-border w3-border-theme w3-right-align' type='text' value='100'></div>");
+		}
+		$("#FactorLimits").append("<button id='Next001' class='w3-btn w3-theme w3-block w3-ripple'>Confirm limits</button>");
+		$("#FactorDeclaration").css("display","block");
+		$("#Next001").click(function(){Next001()});
+	} else
+		$.notify("Enter a positive integer. Number of factors cannot be less than 1.", "info");
+}
+function ResetAll() {
+	ResetLimitsDeclaration();
+	$("#Next000").attr('onclick','').unbind('click');
+	$("#Next000").click(function(){Next000()});
+	$("#NumOfFactors").prop('disabled', false);
+	$("#Next000").text("Next");
+	$("#FactorLimits").empty();
+	$("#FactorDeclaration").css("display","none");
+}
+function Next001() {
+	var ElementsCount = $("#FactorLimits").children().length;
+	var LLimit;
+	var ULimit;
+	var AllGood = true;
+	var maxRange = 0.7;
+	Period = [];
+	maxPoint = [];
+	for (var i=0; i<NumOfFactors; i++) {
+		LLimit = parseFloat($("#FactorLLimit"+i).val());
+		ULimit = parseFloat($("#FactorULimit"+i).val());
+		$("#FactorLLimit"+i).val(LLimit);
+		$("#FactorULimit"+i).val(ULimit);
+		Period[i] = ULimit - LLimit;
+		if (Period[i]>0 && $("#FactorLabel"+i).val())
+			maxPoint[i] = LLimit + Period[i]*(maxRange)*Math.random() + Period[i]*(1-maxRange)/2;
+		else {
+			AllGood = false;
+			$("#FactorLLimit"+i).focus();
+			$("#FactorLLimit"+i).select();
+			$.notify("Label cannot be balnk. Also, make sure the limits are numeric values, where the upper limit is grater than the lower limit.", "info");
+			break;
+		}
+	}
+	if (AllGood) {
+		DisableTheLimitsDeclaration (true);
+		$("#Next001").attr('onclick','').unbind('click');
+		$("#Next001").click(function(){ResetLimitsDeclaration()});
+		$("#Next001").text("Modify factors/limits");
+		for(var i=0; i<NumOfFactors; i++) {
+			$("#FactorValues").append("<div class='w3-col m6 l6 s6'><input class='w3-input w3-border w3-border-theme' type='text' value='"+$("#FactorLabel"+i).val()+"' disabled></div>");
+			$("#FactorValues").append("<div class='w3-col m6 l6 s6'><input id='FValue"+i+"' class='w3-input w3-border w3-border-theme w3-right-align' type='text'></div>");
+		}
+		$("#FactorValues").append("<div class='w3-col m6 l6 s6'><button id='Next002' class='w3-btn w3-theme w3-block w3-ripple'>Calculate response</button></div>");
+		$("#FactorValues").append("<div class='w3-col m6 l6 s6'><button id='Next003' class='w3-btn w3-theme w3-block w3-ripple'>Validate</button></div>");
+		$("#FactorValues").append("<div class='w3-col m12 l12 s12'><input id='ResponseValue' class='w3-input w3-border w3-border-theme w3-center w3-xlarge' type='text' value='Press Calculate reponse button' disabled></div>");
+		$("#PerformExperiment").css("display","block");
+		$("#Next002").click(function(){Next002()});
+		$("#Next003").click(function(){Next003()});
+		MaximumValueLimit = 100+600*Math.random();
+	}
+
+}
+function ResetLimitsDeclaration() {
+	$("#Next001").attr('onclick','').unbind('click');
+	$("#Next001").click(function(){Next001()});
+	$("#Next001").text("Confirm limits");
+	DisableTheLimitsDeclaration(false);
+	$("#FactorValues").empty();
+	$("#PerformExperiment").css("display","none");
+}
+function DisableTheLimitsDeclaration(Disable) {
+	for (var i=0; i<NumOfFactors; i++) {
+		$("#FactorLabel"+i).prop('disabled', Disable);
+		$("#FactorLLimit"+i).prop('disabled', Disable);
+		$("#FactorULimit"+i).prop('disabled', Disable);
+	}
+}
+function Next002(){
+	//Validate input values
+	var AllGood = AreInputValuesValidForX();
+	if (AllGood) {
+		var Y=0;
+		var sigmoidVal;
+		for (var i=0; i<NumOfFactors; i++) {
+			sigmoidVal = 1/(1+Math.exp(3/Period[i]*(-x[i] + maxPoint[i])));
+			Y = Y + MaximumValueLimit / NumOfFactors * (4 * sigmoidVal * (1 - sigmoidVal)+ 0.01*2*(Math.random()-0.5));
+		}
+		$("#ResponseValue").val("Response= "+Y);
+	}
+}
+function Next003() {
+	var error = 0;
+	var AllGood = AreInputValuesValidForX();
+	if (AllGood) {
+		for (var i=0; i<NumOfFactors; i++) {
+			error = error + Math.pow(x[i]-maxPoint[i],2);
+		}
+		error = error/NumOfFactors;
+		$("#ResponseValue").val("Error (RMS)= "+error);
+	}
+}
+function AreInputValuesValidForX () {
+	var AllGood = true;
+	x = [];
+	var LLimit;
+	var ULimit;
+	for (var i=0; i<NumOfFactors; i++) {
+		x[i] = parseFloat($("#FValue"+i).val());
+		$("#FValue"+i).val(x[i]);
+		LLimit = parseFloat($("#FactorLLimit"+i).val());
+		ULimit = parseFloat($("#FactorULimit"+i).val());
+		if (x[i]<LLimit ||  x[i]>ULimit) {
+			AllGood = false;
+			$("#FValue"+i).focus();
+			$("#FValue"+i).select();
+			$.notify("Enter a value with in the upper and lower limits.", "info");
+			break;
+		}
+	}
+	return AllGood;
+}
+</script>
