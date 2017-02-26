@@ -2,7 +2,7 @@ theme = "skgadi-w3"
 languageCode = "en-us"
 title = "Web-tools"
 
-baseurl = "https://skgadi.com/"
+baseurl = "https://tools.skgadi.com/"
 [params]
 	CommonTitle = "Web tools"
 	SubTitle = "Web tools designed by Suresh Kumar Gadi"
