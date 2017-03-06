@@ -18,16 +18,17 @@
       <guid>https://tools.skgadi.com/mathematics/multifactorial-experiment-simulator/</guid>
       <description>&lt;p&gt;This tool allows user to simulate multifactorial experiments. The optimization result can be verified here: This tool provides an error of the estimated values for the factors.&lt;/p&gt;
 &lt;div class=&#34;w3-row&#34;&gt;
-	&lt;div class=&#34;w3-col m12 l12 s12 w3-padding w3-border w3-border-theme w3-center&#34;&gt;Number of factors&lt;/div&gt;
+	&lt;header class=&#34;w3-theme w3-padding&#34;&gt;Select number of factors&lt;/header&gt;
 	&lt;div class=&#34;w3-col m12 l12 s12&#34;&gt;
 		&lt;input id=&#34;NumOfFactors&#34; class=&#34;w3-input w3-border w3-border-theme&#34; placeholder=&#34;Enter an integer&#34; type=&#34;text&#34;&gt;
 	&lt;/div&gt;
 	&lt;div class=&#34;w3-col m12 l12 s12&#34;&gt;
-		&lt;button id=&#34;Next000&#34; class=&#34;w3-btn w3-theme w3-ripple w3-block&#34;&gt;Next&lt;/button&gt;
+		&lt;button id=&#34;Next000&#34; class=&#34;w3-btn w3-theme-d5 w3-ripple w3-block&#34;&gt;Next&lt;/button&gt;
 	&lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;FactorDeclaration&#34; class=&#34;w3-containter w3-margin-top w3-border w3-border-theme&#34;&gt;
 	&lt;div class=&#34;w3-row&#34;&gt;
+		&lt;header class=&#34;w3-theme w3-padding&#34;&gt;Select the upper and lower limits&lt;/header&gt;
 		&lt;div class=&#34;w3-col m4 l4 s4 w3-padding w3-border w3-border-theme w3-center&#34;&gt;Factor&lt;/div&gt;
 		&lt;div class=&#34;w3-col m4 l4 s4 w3-padding w3-border w3-border-theme w3-center&#34;&gt;Lower limit&lt;/div&gt;
 		&lt;div class=&#34;w3-col m4 l4 s4 w3-padding w3-border w3-border-theme w3-center&#34;&gt;Upper limit&lt;/div&gt;
@@ -36,6 +37,7 @@
 	&lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;PerformExperiment&#34; class=&#34;w3-containter w3-margin-top w3-border w3-border-theme&#34;&gt;
+	&lt;header class=&#34;w3-theme w3-padding&#34;&gt;Perform individual experiment/measure distance from optimum value (validate optimum value)&lt;/header&gt;
 	&lt;div class=&#34;w3-row&#34;&gt;
 		&lt;div class=&#34;w3-col m6 l6 s6 w3-padding w3-border w3-border-theme w3-center&#34;&gt;Factor&lt;/div&gt;
 		&lt;div class=&#34;w3-col m6 l6 s6 w3-padding w3-border w3-border-theme w3-center&#34;&gt;Value&lt;/div&gt;
@@ -43,7 +45,17 @@
 	&lt;div id=&#34;FactorValues&#34; class=&#34;w3-row&#34;&gt;
 	&lt;/div&gt;
 &lt;/div&gt;
-
+&lt;div id=&#34;PerformBulkExperiment&#34; class=&#34;w3-containter w3-margin-top w3-border w3-border-theme&#34;&gt;
+	&lt;header class=&#34;w3-theme w3-padding&#34;&gt;Perform bulk experiments&lt;/header&gt;
+	&lt;div class=&#34;w3-row&#34;&gt;
+		&lt;div class=&#34;w3-col m12 l12 s12&#34;&gt;
+			&lt;textarea id=&#34;BulkText&#34; style=&#34;width:100%; height: 100px; display: block;&#34; class=&#34;w3-code jsHigh notranslate w3-margin-0&#34; contenteditable=&#34;true&#34;&gt;To perform bulk experiments, paste your excel data here.&lt;/textarea&gt;
+		&lt;/div&gt;
+		&lt;div class=&#34;w3-col m12 l12 s12&#34;&gt;
+			&lt;button id=&#39;BtnBulkCalculations&#39; class=&#39;w3-btn w3-theme-d5 w3-block w3-ripple&#39;&gt;Perform bulk experiments&lt;/button&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;
+&lt;/div&gt;
 &lt;script&gt;
 var Period = [];
 var maxPoint = [];
@@ -54,6 +66,11 @@ $( document ).ready(function() {
 	$(&#34;#Next000&#34;).click(function(){Next000()});
 	$(&#34;#FactorDeclaration&#34;).css(&#34;display&#34;,&#34;none&#34;);
 	$(&#34;#PerformExperiment&#34;).css(&#34;display&#34;,&#34;none&#34;);
+	$(&#34;#PerformBulkExperiment&#34;).css(&#34;display&#34;,&#34;none&#34;);
+	$(&#34;#BtnBulkCalculations&#34;).click(function(){PerformBulkCalc()});
+	$(&#34;#BulkText&#34;).focusin(function(){
+		$(&#34;#BulkText&#34;).select();
+	});
 	$(&#34;#NumOfFactors&#34;).focus();
 });
 function Next000() {
@@ -69,20 +86,22 @@ function Next000() {
 			$(&#34;#FactorLimits&#34;).append(&#34;&lt;div class=&#39;w3-col m4 l4 s4&#39;&gt;&lt;input id=&#39;FactorLLimit&#34;+i+&#34;&#39; class=&#39;w3-input w3-border w3-border-theme w3-right-align&#39; type=&#39;text&#39; value=&#39;0&#39;&gt;&lt;/div&gt;&#34;);
 			$(&#34;#FactorLimits&#34;).append(&#34;&lt;div class=&#39;w3-col m4 l4 s4&#39;&gt;&lt;input id=&#39;FactorULimit&#34;+i+&#34;&#39; class=&#39;w3-input w3-border w3-border-theme w3-right-align&#39; type=&#39;text&#39; value=&#39;100&#39;&gt;&lt;/div&gt;&#34;);
 		}
-		$(&#34;#FactorLimits&#34;).append(&#34;&lt;button id=&#39;Next001&#39; class=&#39;w3-btn w3-theme w3-block w3-ripple&#39;&gt;Confirm limits&lt;/button&gt;&#34;);
+		$(&#34;#FactorLimits&#34;).append(&#34;&lt;button id=&#39;Next001&#39; class=&#39;w3-btn w3-theme-d5 w3-block w3-ripple&#39;&gt;Confirm limits&lt;/button&gt;&#34;);
 		$(&#34;#FactorDeclaration&#34;).css(&#34;display&#34;,&#34;block&#34;);
 		$(&#34;#Next001&#34;).click(function(){Next001()});
 	} else
 		$.notify(&#34;Enter a positive integer. Number of factors cannot be less than 1.&#34;, &#34;info&#34;);
 }
 function ResetAll() {
-	ResetLimitsDeclaration();
-	$(&#34;#Next000&#34;).attr(&#39;onclick&#39;,&#39;&#39;).unbind(&#39;click&#39;);
-	$(&#34;#Next000&#34;).click(function(){Next000()});
-	$(&#34;#NumOfFactors&#34;).prop(&#39;disabled&#39;, false);
-	$(&#34;#Next000&#34;).text(&#34;Next&#34;);
-	$(&#34;#FactorLimits&#34;).empty();
-	$(&#34;#FactorDeclaration&#34;).css(&#34;display&#34;,&#34;none&#34;);
+	if (confirm(&#39;This will reset the limits and the experiment.&#39;)) {
+		ResetLimitsDeclarationAuthorized();
+		$(&#34;#Next000&#34;).attr(&#39;onclick&#39;,&#39;&#39;).unbind(&#39;click&#39;);
+		$(&#34;#Next000&#34;).click(function(){Next000()});
+		$(&#34;#NumOfFactors&#34;).prop(&#39;disabled&#39;, false);
+		$(&#34;#Next000&#34;).text(&#34;Next&#34;);
+		$(&#34;#FactorLimits&#34;).empty();
+		$(&#34;#FactorDeclaration&#34;).css(&#34;display&#34;,&#34;none&#34;);
+	}
 }
 function Next001() {
 	var ElementsCount = $(&#34;#FactorLimits&#34;).children().length;
@@ -117,10 +136,11 @@ function Next001() {
 			$(&#34;#FactorValues&#34;).append(&#34;&lt;div class=&#39;w3-col m6 l6 s6&#39;&gt;&lt;input class=&#39;w3-input w3-border w3-border-theme&#39; type=&#39;text&#39; value=&#39;&#34;+$(&#34;#FactorLabel&#34;+i).val()+&#34;&#39; disabled&gt;&lt;/div&gt;&#34;);
 			$(&#34;#FactorValues&#34;).append(&#34;&lt;div class=&#39;w3-col m6 l6 s6&#39;&gt;&lt;input id=&#39;FValue&#34;+i+&#34;&#39; class=&#39;w3-input w3-border w3-border-theme w3-right-align&#39; type=&#39;text&#39;&gt;&lt;/div&gt;&#34;);
 		}
-		$(&#34;#FactorValues&#34;).append(&#34;&lt;div class=&#39;w3-col m6 l6 s6&#39;&gt;&lt;button id=&#39;Next002&#39; class=&#39;w3-btn w3-theme w3-block w3-ripple&#39;&gt;Calculate response&lt;/button&gt;&lt;/div&gt;&#34;);
-		$(&#34;#FactorValues&#34;).append(&#34;&lt;div class=&#39;w3-col m6 l6 s6&#39;&gt;&lt;button id=&#39;Next003&#39; class=&#39;w3-btn w3-theme w3-block w3-ripple&#39;&gt;Validate&lt;/button&gt;&lt;/div&gt;&#34;);
+		$(&#34;#FactorValues&#34;).append(&#34;&lt;div class=&#39;w3-col m6 l6 s6&#39;&gt;&lt;button id=&#39;Next002&#39; class=&#39;w3-btn w3-theme-d5 w3-border w3-border-theme w3-block w3-ripple&#39;&gt;Calculate response&lt;/button&gt;&lt;/div&gt;&#34;);
+		$(&#34;#FactorValues&#34;).append(&#34;&lt;div class=&#39;w3-col m6 l6 s6&#39;&gt;&lt;button id=&#39;Next003&#39; class=&#39;w3-btn w3-theme-d5 w3-border w3-border-theme w3-block w3-ripple&#39;&gt;Is optimum&lt;/button&gt;&lt;/div&gt;&#34;);
 		$(&#34;#FactorValues&#34;).append(&#34;&lt;div class=&#39;w3-col m12 l12 s12&#39;&gt;&lt;input id=&#39;ResponseValue&#39; class=&#39;w3-input w3-border w3-border-theme w3-center w3-xlarge&#39; type=&#39;text&#39; value=&#39;Press Calculate reponse button&#39; disabled&gt;&lt;/div&gt;&#34;);
 		$(&#34;#PerformExperiment&#34;).css(&#34;display&#34;,&#34;block&#34;);
+		$(&#34;#PerformBulkExperiment&#34;).css(&#34;display&#34;,&#34;block&#34;);
 		$(&#34;#Next002&#34;).click(function(){Next002()});
 		$(&#34;#Next003&#34;).click(function(){Next003()});
 		MaximumValueLimit = 100+600*Math.random();
@@ -128,12 +148,18 @@ function Next001() {
 
 }
 function ResetLimitsDeclaration() {
+	if (confirm(&#39;This will reset the current experiment.&#39;)) {
+		ResetLimitsDeclarationAuthorized()
+	}
+}
+function ResetLimitsDeclarationAuthorized() {
 	$(&#34;#Next001&#34;).attr(&#39;onclick&#39;,&#39;&#39;).unbind(&#39;click&#39;);
 	$(&#34;#Next001&#34;).click(function(){Next001()});
 	$(&#34;#Next001&#34;).text(&#34;Confirm limits&#34;);
 	DisableTheLimitsDeclaration(false);
 	$(&#34;#FactorValues&#34;).empty();
 	$(&#34;#PerformExperiment&#34;).css(&#34;display&#34;,&#34;none&#34;);
+	$(&#34;#PerformBulkExperiment&#34;).css(&#34;display&#34;,&#34;none&#34;);
 }
 function DisableTheLimitsDeclaration(Disable) {
 	for (var i=0; i&lt;NumOfFactors; i++) {
@@ -146,24 +172,34 @@ function Next002(){
 	//Validate input values
 	var AllGood = AreInputValuesValidForX();
 	if (AllGood) {
-		var Y=0;
-		var sigmoidVal;
-		for (var i=0; i&lt;NumOfFactors; i++) {
-			sigmoidVal = 1/(1+Math.exp(3/Period[i]*(-x[i] + maxPoint[i])));
-			Y = Y + MaximumValueLimit / NumOfFactors * (4 * sigmoidVal * (1 - sigmoidVal)+ 0.01*2*(Math.random()-0.5));
-		}
+		Y = GetTheYValue ();
 		$(&#34;#ResponseValue&#34;).val(&#34;Response= &#34;+Y);
+		copyTextToClipboard(Y);
+		$.notify(&#34;Response copied to the clipboard.&#34;, &#34;success&#34;);
 	}
+}
+function GetTheYValue () {
+	var Y=0;
+	var sigmoidVal;
+	for (var i=0; i&lt;NumOfFactors; i++) {
+		sigmoidVal = 1/(1+Math.exp(3/Period[i]*(-x[i] + maxPoint[i])));
+		Y = Y + MaximumValueLimit / NumOfFactors * (4 * sigmoidVal * (1 - sigmoidVal)+ 0.01*2*(Math.random()-0.5));
+	}
+	return Y
 }
 function Next003() {
 	var error = 0;
+	var LLimit;
+	var ULimit;
 	var AllGood = AreInputValuesValidForX();
 	if (AllGood) {
 		for (var i=0; i&lt;NumOfFactors; i++) {
-			error = error + Math.pow(x[i]-maxPoint[i],2);
+			LLimit = parseFloat($(&#34;#FactorLLimit&#34;+i).val());
+			ULimit = parseFloat($(&#34;#FactorULimit&#34;+i).val());
+			error = error + Math.abs((x[i]-maxPoint[i])/(ULimit-LLimit));
 		}
 		error = error/NumOfFactors;
-		$(&#34;#ResponseValue&#34;).val(&#34;Error (RMS)= &#34;+error);
+		$(&#34;#ResponseValue&#34;).val(&#34;Your input is &#34;+error*100+&#34;% away from the optimum value.&#34;);
 	}
 }
 function AreInputValuesValidForX () {
@@ -186,6 +222,41 @@ function AreInputValuesValidForX () {
 	}
 	return AllGood;
 }
+function PerformBulkCalc() {
+	var Lines;
+	var InputVars;
+	var YOutPut = &#34;&#34;;
+	var FoundLimitError;
+	Lines = $(&#34;#BulkText&#34;).val().split(&#39;\n&#39;);
+	for (var i=0; i&lt;Lines.length; i++) {
+		InputVars = Lines[i].split(&#39;\t&#39;);
+		if (InputVars.length == NumOfFactors) {
+			FoundLimitError = false;
+			for(var j=0; j&lt;InputVars.length; j++){
+				x[j] = parseFloat(InputVars[j]);
+				LLimit = parseFloat($(&#34;#FactorLLimit&#34;+j).val());
+				ULimit = parseFloat($(&#34;#FactorULimit&#34;+j).val());
+				if (x[j]&lt;LLimit ||  x[j]&gt;ULimit) {
+					if (!FoundLimitError) {
+						YOutPut += &#39;NaN\t Error(s):&#39;;
+						FoundLimitError = true;
+					}
+					YOutPut += &#39; \&#34;&#39;+$(&#34;#FactorLabel&#34;+j).val()+&#39;\&#34; is out of limit;&#39;;
+				}
+			}
+			if (!FoundLimitError){
+				YOutPut += GetTheYValue()+&#39;\tGood&#39;;
+			}
+			YOutPut +=&#39;\n&#39;;
+		} else
+			YOutPut += &#39;NaN\tError(s): Number of factors do not match\n&#39;;
+	}
+	copyTextToClipboard(YOutPut);
+	$.notify(&#34;Bulk results are copied to the clipboard.&#34;, &#34;success&#34;);
+}
+
+
+
 &lt;/script&gt;</description>
     </item>
     
