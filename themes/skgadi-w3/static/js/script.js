@@ -106,7 +106,7 @@ function ApplyLayout() {
 }
 
 function OpenDOI(DOI) {
-	window.open('http://dx.doi.org/' + $(DOI).text(), '_blank');
+	window.open('https://doi.org/' + $(DOI).text(), '_blank');
 }
 
 function OpenURL(URL) {
